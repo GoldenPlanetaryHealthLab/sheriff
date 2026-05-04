@@ -8,4 +8,15 @@ Across The Frontier, prospectors do the hard work
 of building and maintaining pipelines that pan and 
 process data to and from the Gold Mine. The `sheriff` is a simple 
 package that provides a set of tools for enforcing the rules
-and ensuring that users are a part of The Frontier.
+and ensuring that users are a part of The Frontier and working
+in a valid space.
+
+To get the sheriff to inspect your papers, you can run the following command in your terminal:
+
+```bash
+# install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# install sheriff
+uv tool install git+https://github.com/GoldenPlanetaryHealthLab/sheriff.git@v0.1.0
+```
