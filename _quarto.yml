@@ -1,0 +1,8 @@
+project:
+  title: "Sheriff"
+  output-dir: "user_guide"
+  render:
+    - "notebooks/*"
+    - "!great-docs/**"
+    - "!*.md"
+

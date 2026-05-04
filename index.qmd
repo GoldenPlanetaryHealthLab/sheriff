@@ -1,0 +1,11 @@
+---
+title: "sheriff"
+---
+
+## Sheriff
+
+Across The Frontier, prospectors do the hard work
+of building and maintaining pipelines that pan and 
+process data to and from the Gold Mine. The `sheriff` is a simple 
+package that provides a set of tools for enforcing the rules
+and ensuring that users are a part of The Frontier.
