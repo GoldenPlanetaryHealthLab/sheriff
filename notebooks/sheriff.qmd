@@ -91,10 +91,16 @@ create a script that checks citizenship and prints the frontier path if found.
 
 ```{python}
 #| sorting-hat: keep
-
-if __name__ == "__main__":
+def main():
     sheriff = Sheriff()
     sheriff.check_citizen()
+```
+
+```{python}
+#| sorting-hat: keep
+
+if __name__ == "__main__":
+    main()
 ```
 
 Cool!

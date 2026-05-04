@@ -51,6 +51,10 @@ A simple class that checks for frontier citizenship by looking for a frontier.ym
         return False
 
 
-if __name__ == "__main__":
+def main():
     sheriff = Sheriff()
     sheriff.check_citizen()
+
+
+if __name__ == "__main__":
+    main()

@@ -73,9 +73,14 @@ With this simple class definition, we can now create a script that
 checks citizenship and prints the frontier path if found.
 
 ``` python
-if __name__ == "__main__":
+def main():
     sheriff = Sheriff()
     sheriff.check_citizen()
+```
+
+``` python
+if __name__ == "__main__":
+    main()
 ```
 
     There's a new sheriff in town!
