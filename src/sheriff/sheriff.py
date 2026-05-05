@@ -1,5 +1,8 @@
-from pathlib import Path
 import os
+from rich.console import Console
+from pathlib import Path
+
+console = Console()
 
 class Sheriff:
     """
@@ -16,7 +19,7 @@ A simple class that checks for frontier citizenship by looking for a frontier.ym
         self.frontier_file = frontier_file
         self.frontier_path = None
 
-        print("There's a new sheriff in town!")
+        console.print("🤠 There's a new sheriff in town! Let's take a look at your papers...")
 
     def check_citizen(self):
         """
@@ -29,8 +32,8 @@ A simple class that checks for frontier citizenship by looking for a frontier.ym
         if env_path and os.path.isfile(env_path):
             self.frontier_path = env_path
 
-            print(f"Found frontier file at: {self.frontier_path}")
-            print("Welcome to the frontier, citizen!")
+            console.print(f"🪪 Found frontier file at: {self.frontier_path}")
+            console.print("🏞️ Welcome to the frontier, citizen!")
             return True
         
         # Check current working directory
@@ -43,18 +46,29 @@ A simple class that checks for frontier citizenship by looking for a frontier.ym
             
             if os.path.isfile(frontier_file_path):
                 self.frontier_path = frontier_file_path
-                print(f"Found frontier file at: {self.frontier_path}")
-                print("Welcome to the frontier, citizen!")
+                console.print(f"🪪 Found frontier file at: {self.frontier_path}")
+                console.print("🏞️ Welcome to the frontier, citizen!")
                 return True
         
-        print("No frontier file found. Please set the THE_FRONTIER environment variable or navigate to a directory within the frontier to validate your citizenship.")
+        console.print("❌ No frontier file found. Please set the THE_FRONTIER environment variable or navigate to a directory within the frontier to validate your citizenship.")
         return False
 
 
-def main():
+import typer
+
+app = typer.Typer(
+    name="sheriff",
+    help="Validate your identity and lawful presence on The Frontier.",
+)
+
+@app.command()
+def inspect():
+    """
+    Hey there, partner! The sheriff is here to check your papers and make sure you're a citizen of The Frontier. Let's see if you have what it takes to be a part of this wild and wonderful land.
+    """
     sheriff = Sheriff()
     sheriff.check_citizen()
 
 
 if __name__ == "__main__":
-    main()
+    app()
