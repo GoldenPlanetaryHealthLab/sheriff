@@ -36,25 +36,30 @@ all that's needed.
 import os
 from rich.console import Console
 from pathlib import Path
-
-console = Console()
+from sheriff.validate_globus import validate_globus_credentials, GlobusClearance
 
 class Sheriff:
     """
 A simple class that checks for frontier citizenship by looking for a frontier.yml file in the environment variable or the current working directory.
     """
-    def __init__(self, frontier_dirname="frontier", frontier_file="frontier.yml"):
+    def __init__(
+        self, 
+        console: Console,
+        frontier_dirname: str = "frontier", 
+        frontier_file: str = "frontier.yml",
+        ):
         """
         Initializes the Sheriff Class.
         Args:
             frontier_dirname (str): The name of the directory that contains the frontier.yml file. Default is "frontier".
             frontier_file (str): The name of the frontier file. Default is "frontier.yml".
         """
+        self.console = console
         self.frontier_dirname = frontier_dirname
         self.frontier_file = frontier_file
         self.frontier_path = None
 
-        console.print("🤠 There's a new sheriff in town! Let's take a look at your papers...")
+        self.console.print("🤠 There's a new sheriff in town! Let's take a look at your papers...")
 
     def check_citizen(self):
         """
@@ -67,8 +72,8 @@ A simple class that checks for frontier citizenship by looking for a frontier.ym
         if env_path and os.path.isfile(env_path):
             self.frontier_path = env_path
 
-            console.print(f"🪪 Found frontier file at: {self.frontier_path}")
-            console.print("🏞️ Welcome to the frontier, citizen!")
+            self.console.print(f"🪪 Found frontier file at: {self.frontier_path}")
+            self.console.print("🏞️ Welcome to the frontier, citizen!")
             return True
         
         # Check current working directory
@@ -81,12 +86,31 @@ A simple class that checks for frontier citizenship by looking for a frontier.ym
             
             if os.path.isfile(frontier_file_path):
                 self.frontier_path = frontier_file_path
-                console.print(f"🪪 Found frontier file at: {self.frontier_path}")
-                console.print("🏞️ Welcome to the frontier, citizen!")
+                self.console.print(f"🪪 Found frontier file at: {self.frontier_path}")
+                self.console.print("🏞️ Welcome to the frontier, citizen!")
                 return True
         
-        console.print("❌ No frontier file found. Please set the THE_FRONTIER environment variable or navigate to a directory within the frontier to validate your citizenship.")
+        self.console.print("❌ No frontier file found. Please set the THE_FRONTIER environment variable or navigate to a directory within the frontier to validate your citizenship.")
         return False
+    
+    def check_globus_access(self, globus_info: dict) -> GlobusClearance:
+        """
+        Checks for globus access by validating the globus credentials provided in the manifest.
+        Args:
+            globus_info (dict): A dictionary containing the globus credentials and information.
+        Returns:
+            GlobusClearance: A dataclass indicating the validation result and associated objects.
+        """
+        self.console.print("🔍 Checking your Globus access...")
+
+        clearance = validate_globus_credentials(globus_info, self.console)
+
+        if clearance.cleared:
+            self.console.print("✅ Globus access validated. You're good to go!")
+        else:
+            self.console.print("❌ Globus access validation failed. Please check your credentials and try again.")
+
+        return clearance
 ```
 
 With this simple class definition, we can now
@@ -107,7 +131,8 @@ def inspect():
     """
     Hey there, partner! The sheriff is here to check your papers and make sure you're a citizen of The Frontier. Let's see if you have what it takes to be a part of this wild and wonderful land.
     """
-    sheriff = Sheriff()
+    console = Console()
+    sheriff = Sheriff(console=console)
     sheriff.check_citizen()
 ```
 
