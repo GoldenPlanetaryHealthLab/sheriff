@@ -101,26 +101,30 @@ requisite transfer object from and execute.
 
 ``` python
 from rich.console import Console
-from globus_sdk import GlobusAppConfig, UserApp, TransferClient, GlobusAPIError
+from globus_sdk import GlobusAppConfig, UserApp, TransferClient, GlobusAPIError, TransferData
 from dataclasses import dataclass
 
 @dataclass
 class GlobusClearance:
     app: UserApp | None
-    transfer_client: TransferClient | None
+    transfer_id = str | None
     source_collection: str | None
     destination_collection: str | None
     cleared: bool
 
-def validate_globus_credentials(
+def issue_globus_transfer(
     globus_info: dict,
     console: Console,
-    stagecoach_app_id: str = "7723dff4-fa63-4639-903b-ba6541e24e98"
+    stagecoach_app_id: str = "7723dff4-fa63-4639-903b-ba6541e24e98",
+    issue_transfer: bool = False
     ) -> GlobusClearance:
     """
     Validates the globus credentials provided in the manifest.
     Args:
         globus_info (dict): A dictionary containing the globus credentials and information.
+        console (Console): Rich console object for output messages.
+        stagecoach_app_id (str): The Globus application client ID for authentication.
+        issue_transfer (bool): Whether to actually issue a transfer after validation. Defaults to False.
     Returns:
         GlobusClearance: A dataclass indicating the validation result and associated objects.
     """
@@ -130,7 +134,7 @@ def validate_globus_credentials(
             console.print("Globus access not requested.")
             return GlobusClearance(
                 app = None,
-                transfer_client = None,
+                transfer_id = None,
                 source_collection = None,
                 destination_collection = None,
                 cleared = True
@@ -144,10 +148,10 @@ def validate_globus_credentials(
             config=GlobusAppConfig(auto_redrive_gares=True),
         ) as app:
             with TransferClient(app=app) as client:
-                src_collection = globus_info.get("globus_source_endpoint")
-                dst_collection = globus_info.get("globus_destination_endpoint")
-                src_path = globus_info.get("globus_source_path")
-                dst_path = globus_info.get("globus_destination_path")
+                src_collection = globus_info.get("globus_source_endpoint", None)
+                dst_collection = globus_info.get("globus_destination_endpoint", None)
+                src_path = globus_info.get("globus_source_path", None)
+                dst_path = globus_info.get("globus_destination_path", None)
 
                 client.add_app_data_access_scope(src_collection)
                 client.add_app_data_access_scope(dst_collection)
@@ -156,24 +160,29 @@ def validate_globus_credentials(
                 transfer_request.add_item(src_path, dst_path)
                 
                 # Attempt to stat the source collection to validate access
-                resp = client.operation_stat(src_collection, "~")
+                resp = client.operation_stat(src_collection, src_path)
                 if resp.http_status == 200:
                     console.print("✅ Globus credentials validated successfully.")
+                else:
+                    console.print(f"❌ Failed to validate globus credentials. Operation stat returned status: {resp.http_status}")
+                    raise GlobusAPIError()
+
+                if issue_transfer:
+                    task = client.submit_transfer(transfer_request)
+                    console.print(f"Submitted transfer. Task ID: {task['task_id']}.")
                     return GlobusClearance(
                         app = app,
-                        transfer_client = client,
+                        transfer_id = task,
                         source_collection = src_collection,
                         destination_collection = dst_collection,
                         cleared = True
                     )
-                else:
-                    raise GlobusAPIError("Unable to `stat` access source collection.")
 
     except GlobusAPIError as e:
         console.print_exception()
         return GlobusClearance(
             app = None,
-            transfer_client = None,
+            transfer_id = None,
             source_collection = globus_info.get("globus_source_endpoint", None),
             destination_collection = globus_info.get("globus_destination_endpoint", None),
             cleared = False
@@ -182,7 +191,7 @@ def validate_globus_credentials(
         console.print_exception()
         return GlobusClearance(
             app = None,
-            transfer_client = None,
+            transfer_id = None,
             source_collection = globus_info.get("globus_source_endpoint", None),
             destination_collection = globus_info.get("globus_destination_endpoint", None),
             cleared = False

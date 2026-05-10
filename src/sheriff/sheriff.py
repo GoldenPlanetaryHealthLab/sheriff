@@ -1,7 +1,7 @@
 import os
 from rich.console import Console
 from pathlib import Path
-from sheriff.validate_globus import validate_globus_credentials, GlobusClearance
+from sheriff.validate_globus import issue_globus_transfer, GlobusClearance
 
 class Sheriff:
     """
@@ -24,7 +24,7 @@ A simple class that checks for frontier citizenship by looking for a frontier.ym
         self.frontier_file = frontier_file
         self.frontier_path = None
 
-        self.console.print("🤠 There's a new sheriff in town! Let's take a look at your papers...")
+        self.console.print("🤠 The sheriff's in town! Let's take a look at your papers...")
 
     def check_citizen(self):
         """
