@@ -1,6 +1,6 @@
 [project]
 name = "sheriff"
-version = "0.1.1"
+version = "0.1.2"
 description = "A simple tool to validate frontier citizenship"
 readme = "README.md"
 authors = [
