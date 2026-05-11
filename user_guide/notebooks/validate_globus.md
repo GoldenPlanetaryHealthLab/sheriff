@@ -106,7 +106,7 @@ from dataclasses import dataclass
 
 @dataclass
 class GlobusClearance:
-    transfer_id : str | None
+    transfer_id : dict | None
     source_collection: str | None
     destination_collection: str | None
     cleared: bool
