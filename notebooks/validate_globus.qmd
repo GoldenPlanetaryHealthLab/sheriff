@@ -207,8 +207,7 @@ from dataclasses import dataclass
 
 @dataclass
 class GlobusClearance:
-    app: UserApp | None
-    transfer_id = str | None
+    transfer_id : str | None
     source_collection: str | None
     destination_collection: str | None
     cleared: bool
@@ -234,7 +233,6 @@ def issue_globus_transfer(
         if not globus_info.get("use_globus", False):
             console.print("Globus access not requested.")
             return GlobusClearance(
-                app = None,
                 transfer_id = None,
                 source_collection = None,
                 destination_collection = None,
@@ -249,10 +247,10 @@ def issue_globus_transfer(
             config=GlobusAppConfig(auto_redrive_gares=True),
         ) as app:
             with TransferClient(app=app) as client:
-                src_collection = globus_info.get("globus_source_endpoint", None)
-                dst_collection = globus_info.get("globus_destination_endpoint", None)
-                src_path = globus_info.get("globus_source_path", None)
-                dst_path = globus_info.get("globus_destination_path", None)
+                src_collection = globus_info.get("globus_source_endpoint")
+                dst_collection = globus_info.get("globus_destination_endpoint")
+                src_path = globus_info.get("globus_source_path")
+                dst_path = globus_info.get("globus_destination_path")
 
                 client.add_app_data_access_scope(src_collection)
                 client.add_app_data_access_scope(dst_collection)
@@ -272,8 +270,14 @@ def issue_globus_transfer(
                     task = client.submit_transfer(transfer_request)
                     console.print(f"Submitted transfer. Task ID: {task['task_id']}.")
                     return GlobusClearance(
-                        app = app,
                         transfer_id = task,
+                        source_collection = src_collection,
+                        destination_collection = dst_collection,
+                        cleared = True
+                    )
+                else:
+                    return GlobusClearance(
+                        transfer_id = None,
                         source_collection = src_collection,
                         destination_collection = dst_collection,
                         cleared = True
@@ -282,7 +286,6 @@ def issue_globus_transfer(
     except GlobusAPIError as e:
         console.print_exception()
         return GlobusClearance(
-            app = None,
             transfer_id = None,
             source_collection = globus_info.get("globus_source_endpoint", None),
             destination_collection = globus_info.get("globus_destination_endpoint", None),
@@ -291,7 +294,6 @@ def issue_globus_transfer(
     except Exception as e:
         console.print_exception()
         return GlobusClearance(
-            app = None,
             transfer_id = None,
             source_collection = globus_info.get("globus_source_endpoint", None),
             destination_collection = globus_info.get("globus_destination_endpoint", None),
