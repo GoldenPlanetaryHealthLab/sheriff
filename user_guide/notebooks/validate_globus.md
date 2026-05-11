@@ -163,7 +163,7 @@ def issue_globus_transfer(
                     console.print("✅ Globus credentials validated successfully.")
                 else:
                     console.print(f"❌ Failed to validate globus credentials. Operation stat returned status: {resp.http_status}")
-                    raise GlobusAPIError()
+                    raise GlobusAPIError(resp)
 
                 if issue_transfer:
                     task = client.submit_transfer(transfer_request)

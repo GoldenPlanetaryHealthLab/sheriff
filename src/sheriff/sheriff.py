@@ -60,7 +60,10 @@ A simple class that checks for frontier citizenship by looking for a frontier.ym
     
     def check_globus_access(self, globus_info: dict) -> GlobusClearance:
         """
-        Checks for globus access by validating the globus credentials provided in the manifest.
+        Checks for globus access by validating the globus credentials provided in the 
+        manifest. Runs transfer if credentials are valid and source and destination 
+        endpoints are provided. Returns a GlobusClearance dataclass indicating the 
+        result of the validation and transfer operation.
         Args:
             globus_info (dict): A dictionary containing the globus credentials and information.
         Returns:
@@ -68,7 +71,7 @@ A simple class that checks for frontier citizenship by looking for a frontier.ym
         """
         self.console.print("🔍 Checking your Globus access...")
 
-        clearance = validate_globus_credentials(globus_info, self.console)
+        clearance = issue_globus_transfer(globus_info, self.console, issue_transfer=False)
 
         if clearance.cleared:
             self.console.print("✅ Globus access validated. You're good to go!")
