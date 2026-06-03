@@ -57,7 +57,7 @@ This is intentionally minimal.
 The `Sheriff` does not enforce data standards, workflow structure, or code quality.
 It only establishes that you are (or are not) operating inside a recognized Frontier workspace.
 
-## ⚙️ Installation
+## ⚙️ Installation & Usage
 
 We recommend installing the `Sheriff` using `uv`, "An extremely fast Python package and project manager, written in Rust," at the user-level:
 
@@ -75,7 +75,7 @@ Install the `Sheriff`:
 uv tool install https://github.com/GoldenPlanetaryHealthLab/sheriff.git
 ```
 
-Finally, as the `Sheriff` to check your papers:
+Finally, ask the `Sheriff` to check your papers:
 
 ```bash
 sheriff
