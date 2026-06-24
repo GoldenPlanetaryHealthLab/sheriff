@@ -1,6 +1,6 @@
 [project]
 name = "sheriff"
-version = "0.1.1"
+version = "0.1.2"
 description = "A simple tool to validate frontier citizenship"
 readme = "README.md"
 authors = [
@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "globus-sdk>=4.5.0",
     "great-docs>=0.10.0",
     "ipykernel>=7.2.0",
     "jupyter>=1.1.1",

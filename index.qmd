@@ -1,7 +1,5 @@
 ---
 title: "🤠 The Sheriff"
-output: gfm
-output-file: "README.md"
 ---
 
 ## 🌵 On the Frontier
